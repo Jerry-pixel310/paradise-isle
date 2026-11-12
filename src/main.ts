@@ -41,6 +41,8 @@ function showOfflineSummary(state: GameState, summary: OfflineSummary): void {
 }
 
 function startGame(state: GameState, slot: number, offline: OfflineSummary | null): void {
+  // 默认开启无限体力；老存档未设置时自动补上
+  if (state.settings.unlimited === undefined) state.settings.unlimited = true;
   // the language is a per-browser choice; saves just follow it
   state.settings.lang = getLang();
   const title = document.getElementById('title-screen');

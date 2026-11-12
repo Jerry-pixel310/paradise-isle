@@ -1,7 +1,7 @@
 {
   "name": "paradise-isle",
   "private": true,
-  "version": "8.3.0",
+  "version": "9.0.0",
   "type": "module",
   "description": "An island life-sim for the browser: farm, raise and breed animals, fish, ranch-craft, run a restaurant, decorate, dress up and visit neighbours.",
   "scripts": {

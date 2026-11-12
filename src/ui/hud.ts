@@ -13,7 +13,7 @@ import { fmtDuration, t, tl } from '../i18n';
 import { h, spriteImg } from './dom';
 
 export interface HudCallbacks {
-  onOpen: (panel: 'inventory' | 'shop' | 'quests' | 'collections' | 'wardrobe' | 'neighbors' | 'settings' | 'crafting' | 'festival' | 'checkin') => void;
+  onOpen: (panel: 'inventory' | 'shop' | 'quests' | 'collections' | 'wardrobe' | 'neighbors' | 'settings' | 'crafting' | 'festival' | 'checkin' | 'tutorial') => void;
   onToggleEdit: () => void;
   onGoHome: () => void;
   onToggleInterior: () => void;
@@ -128,6 +128,7 @@ export class Hud {
       this.mkBtn('fx:heart', t('hud.neighbors'), () => cb.onOpen('neighbors')),
       sep(),
       this.editBtn,
+      this.mkBtn('fx:sparkle', t('hud.tutorial'), () => cb.onOpen('tutorial')),
       this.mkBtn('fx:sleep', t('hud.settings'), () => cb.onOpen('settings')),
     );
 
@@ -189,9 +190,14 @@ export class Hud {
     this.coinsEl.textContent = String(p.coins);
     this.foodEl.textContent = String(p.food);
     this.repEl.textContent = String(p.reputation);
-    this.energyEl.textContent = `${p.energy}/${maxEnergy(p.level)}`;
-    const eta = energyEta(state, now);
-    this.energyEtaEl.textContent = eta > 0 ? t('hud.nextEnergy', { t: fmtDuration(eta) }) : '';
+    if (state.settings.unlimited) {
+      this.energyEl.textContent = '∞';
+      this.energyEtaEl.textContent = t('hud.unlimited');
+    } else {
+      this.energyEl.textContent = `${p.energy}/${maxEnergy(p.level)}`;
+      const eta = energyEta(state, now);
+      this.energyEtaEl.textContent = eta > 0 ? t('hud.nextEnergy', { t: fmtDuration(eta) }) : '';
+    }
 
     // 游戏内日历 + 天气
     const cal = calendarAt(state.createdAt, now, state.seed);

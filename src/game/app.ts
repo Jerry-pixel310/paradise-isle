@@ -43,6 +43,7 @@ import { openNeighbors } from '../ui/panels/neighbors';
 import { openSettings } from '../ui/panels/settings';
 import { openCrafting } from '../ui/panels/crafting';
 import { openHelp } from '../ui/panels/help';
+import { openTutorial } from '../ui/panels/tutorial';
 import { openFurniture } from '../ui/panels/furniture';
 import { openFestival } from '../ui/panels/festival';
 import { openPetContest } from '../ui/panels/contest';
@@ -384,6 +385,9 @@ export class App {
           onVisitSnapshot: (snap) => this.visitSnapshot(snap),
         });
         break;
+      case 'tutorial':
+        openTutorial({ onOpen: (panel) => this.openPanel(panel) });
+        break;
       case 'settings':
         openSettings({
           state: this.state,
@@ -391,6 +395,7 @@ export class App {
           onLangChange: () => window.location.reload(),
           onImported: () => window.location.reload(),
           onTogglePixel: (on) => this.renderer.setPixelation(on),
+          onOpenPanel: (panel) => this.openPanel(panel),
           onBackToTitle: () => {
             this.destroy();
             this.onBackToTitle();
@@ -645,6 +650,8 @@ export class App {
   private bindInput(canvas: HTMLCanvasElement): void {
     let downX = 0;
     let downY = 0;
+    let lastPanX = 0;
+    let lastPanY = 0;
     let dragging = false;
     let panning = false;
     // two-finger pinch zoom on touch screens (the mouse wheel does this on desktop)
@@ -665,6 +672,8 @@ export class App {
       }
       downX = ev.clientX;
       downY = ev.clientY;
+      lastPanX = ev.clientX;
+      lastPanY = ev.clientY;
       dragging = true;
       panning = false;
     });
@@ -686,9 +695,12 @@ export class App {
       if (dragging) {
         const dx = ev.clientX - downX;
         const dy = ev.clientY - downY;
-        if (panning || Math.hypot(dx, dy) > 6) {
+        const threshold = ev.pointerType === 'mouse' ? 6 : 12;
+        if (panning || Math.hypot(dx, dy) > threshold) {
           panning = true;
-          cam.pan(ev.movementX, ev.movementY);
+          cam.pan(ev.clientX - lastPanX, ev.clientY - lastPanY);
+          lastPanX = ev.clientX;
+          lastPanY = ev.clientY;
         }
       }
       const tile = cam.tileAt(ev.clientX, ev.clientY);
@@ -708,7 +720,9 @@ export class App {
         panning = false;
         return;
       }
-      this.onClick(ev.clientX, ev.clientY);
+      // 触屏：手指会遮住落点，稍微上移再取格子
+      const tapY = ev.pointerType === 'mouse' ? ev.clientY : ev.clientY - 10;
+      this.onClick(ev.clientX, tapY);
     });
     canvas.addEventListener('pointerleave', (ev) => {
       if (ev.pointerType === 'mouse') dropPointer(ev);
@@ -752,6 +766,7 @@ export class App {
           }
           break;
         case 'h': case '?': openHelp(); break;
+        case 't': openTutorial({ onOpen: (panel) => this.openPanel(panel) }); break;
         default: break;
       }
     });

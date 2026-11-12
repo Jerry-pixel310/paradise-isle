@@ -8,6 +8,12 @@ import { ENERGY_REGEN_MS, MAX_LEVEL, maxEnergy, xpForNextLevel } from './balance
 export function updateEnergy(state: GameState, now: number): void {
   const p = state.player;
   const cap = maxEnergy(p.level);
+  // 无限体力：永远保持满值，不再等待恢复
+  if (state.settings?.unlimited) {
+    p.energy = cap;
+    p.energyUpdatedAt = now;
+    return;
+  }
   if (p.energy >= cap) {
     p.energyUpdatedAt = now;
     return;
@@ -37,6 +43,7 @@ export function petHasSkill(_state: GameState, defId: string, skill: string): bo
 
 /** 距下一点能量恢复的剩余毫秒（UI 倒计时用） */
 export function energyEta(state: GameState, now: number): number {
+  if (state.settings?.unlimited) return 0;
   const p = state.player;
   if (p.energy >= maxEnergy(p.level)) return 0;
   let regenMs = ENERGY_REGEN_MS;
@@ -47,11 +54,17 @@ export function energyEta(state: GameState, now: number): number {
 }
 
 export function hasEnergy(state: GameState, cost: number, now: number): boolean {
+  if (state.settings?.unlimited) return true;
   updateEnergy(state, now);
   return state.player.energy >= cost;
 }
 
 export function spendEnergy(state: GameState, cost: number, now: number): boolean {
+  if (state.settings?.unlimited) {
+    state.player.energy = maxEnergy(state.player.level);
+    state.player.energyUpdatedAt = now;
+    return true;
+  }
   updateEnergy(state, now);
   if (state.player.energy < cost) return false;
   state.player.energy -= cost;
@@ -64,6 +77,10 @@ export function spendEnergy(state: GameState, cost: number, now: number): boolea
 
 export function gainEnergy(state: GameState, amount: number): void {
   const cap = maxEnergy(state.player.level);
+  if (state.settings?.unlimited) {
+    state.player.energy = cap;
+    return;
+  }
   state.player.energy = Math.min(cap, state.player.energy + amount);
 }
 

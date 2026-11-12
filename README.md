@@ -1,6 +1,6 @@
 # Paradise Isle
 
-> **Modified edition v8.3** — 30 rounds of content, a full UI redesign, a completed art pass, six creature silhouettes, seven verified beasts, and rain/snow/storm weather. Includes an offline single-file build (`release/ParadiseIsle.html`) and a static site bundle. Play online: **https://jerry-pixel310.github.io/paradise-isle/**. Locally: **http://127.0.0.1:5180/**.
+> **Modified edition v9.0** — Unlimited energy by default, a 13-module starter guide, touch-control fixes, and a redesigned 3.2-head character. Play online: **https://jerry-pixel310.github.io/paradise-isle/**.
 
 An island life-sim for the browser: farm, raise animals, fish, fight off wild beasts, dress up and visit neighbours, with progress saved in your browser and no account.
 

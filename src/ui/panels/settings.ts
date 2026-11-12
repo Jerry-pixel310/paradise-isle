@@ -9,6 +9,7 @@ import { h, clearChildren } from '../dom';
 import { closePanel, confirmDialog, openPanel, promptDialog } from '../modal';
 import { toast } from '../toast';
 import { openHelp } from './help';
+import { openTutorial } from './tutorial';
 
 export interface SettingsCtx {
   state: GameState;
@@ -19,6 +20,8 @@ export interface SettingsCtx {
   onBackToTitle: () => void;
   /** 像素滤镜开关（由 App 应用到渲染器） */
   onTogglePixel: (on: boolean) => void;
+  /** 从教程卡片跳到对应面板 */
+  onOpenPanel: (panel: string) => void;
 }
 
 export function openSettings(ctx: SettingsCtx): void {
@@ -79,8 +82,15 @@ function render(body: HTMLElement, ctx: SettingsCtx): void {
     }),
   );
 
-  const audio = section(t('set.audio'),
-    toggleRow(t('set.sound'), t('set.soundHint'), state.settings.sound, (v) => {
+  const play = section(t('set.play'),
+    toggleRow(t('set.unlimited'), t('set.unlimitedHint'), state.settings.unlimited === true, (v) => {
+      state.settings.unlimited = v;
+      toast(v ? t('set.unlimitedOn') : t('set.unlimitedOff'), v ? 'good' : 'info');
+      rerender();
+    }),
+  );
+
+  const audio = section(t('set.audio'),    toggleRow(t('set.sound'), t('set.soundHint'), state.settings.sound, (v) => {
       state.settings.sound = v;
       setSound(v);
       rerender();
@@ -121,6 +131,13 @@ function render(body: HTMLElement, ctx: SettingsCtx): void {
     }, `⬇ ${t('set.import')}`),
     h('button', {
       class: 'btn btn-sm',
+      onclick: () => {
+        closePanel();
+        openTutorial({ onOpen: (panel) => ctx.onOpenPanel(panel) });
+      },
+    }, `📖 ${t('tut.title')}`),
+    h('button', {
+      class: 'btn btn-sm',
       onclick: () => openHelp(),
     }, `? ${t('help.title')}`),
   );
@@ -146,10 +163,11 @@ function render(body: HTMLElement, ctx: SettingsCtx): void {
       h('p', {}, t('set.sub')),
     ),
     appearance,
+    play,
     audio,
     saveSection,
     h('div', { class: 'set-about' },
-      h('div', {}, `${t('start.title')} v8.3 生物与天气版`),
+      h('div', {}, `${t('start.title')} v9.0 轻松畅玩版`),
       h('div', {}, t('set.aboutArt')),
     ),
   );

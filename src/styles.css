@@ -2004,6 +2004,76 @@ button:focus-visible { outline: 3px solid rgba(90, 167, 224, 0.55); outline-offs
   .contest-grid { grid-template-columns: 1fr; }
 }
 
+/* ---------------- 新手教程 ---------------- */
+
+.tut-hero {
+  position: relative; padding: 16px 18px; margin-bottom: 12px; border-radius: 18px;
+  background: linear-gradient(135deg, #f6f0e0, #e7ecda);
+  border: 1px solid rgba(158, 132, 90, 0.22);
+}
+.tut-hero h3 { font-family: var(--serif); font-size: 28px; font-weight: 600; letter-spacing: 0.04em; margin-top: 2px; }
+.tut-hero p { font-size: 10px; color: #837662; margin-top: 3px; line-height: 1.6; max-width: 70%; }
+.tut-badge {
+  position: absolute; right: 16px; top: 16px; font-size: 9px; font-weight: 700;
+  color: #4f6b4b; background: rgba(255, 253, 247, 0.8); border: 1px solid rgba(95, 124, 91, 0.25);
+  border-radius: 999px; padding: 4px 9px;
+}
+.tut-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.tut-card {
+  display: flex; flex-direction: column; gap: 8px;
+  background: rgba(255, 253, 247, 0.76); border: 1px solid rgba(158, 132, 90, 0.2);
+  border-radius: 16px; padding: 11px 12px;
+}
+.tut-card-top { display: flex; align-items: center; gap: 8px; }
+.tut-index { font-size: 8px; color: #b49a6c; letter-spacing: 0.1em; }
+.tut-icon { width: 32px; height: 32px; object-fit: contain; flex: none; }
+.tut-name { font-family: var(--serif); font-size: 15px; font-weight: 600; }
+.tut-goal { font-size: 8.5px; color: #958772; margin-top: 1px; line-height: 1.4; }
+.tut-steps { list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 4px; }
+.tut-steps li {
+  counter-increment: step; position: relative; padding-left: 18px;
+  font-size: 9px; line-height: 1.55; color: #6f6352;
+}
+.tut-steps li::before {
+  content: counter(step); position: absolute; left: 0; top: 1px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: rgba(198, 161, 90, 0.16); color: #8a6a2a;
+  font-size: 7px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+.tut-open { align-self: flex-end; margin-top: auto; padding: 3px 8px; font-size: 8.5px; }
+
+@media (max-width: 640px) {
+  .tut-grid { grid-template-columns: 1fr; }
+  .tut-hero h3 { font-size: 23px; }
+  .tut-hero p { max-width: 100%; padding-right: 0; }
+  .tut-badge { position: static; display: inline-block; margin-top: 6px; }
+}
+
+/* ---------------- 触屏精度：更大的可点区域 ---------------- */
+
+@media (pointer: coarse) {
+  .btn:not(.btn-sm) { min-height: 42px; padding: 10px 16px; }
+  .btn-sm { min-height: 34px; padding: 6px 10px; }
+  .hud-btn { min-height: 56px; min-width: 0; padding: 7px 8px; }
+  .action-btn { min-height: 48px; padding: 12px 14px; font-size: 15px; }
+  .res-badge { min-height: 38px; }
+  .tab { min-height: 40px; }
+  .modal-close { width: 40px; height: 40px; }
+}
+
+@media (max-width: 680px) {
+  .hud-bottom {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 2px 0;
+    width: calc(100vw - 20px);
+    max-width: none;
+    padding: 8px 5px;
+  }
+  .hud-btn { min-width: 0; padding: 6px 1px; font-size: 10.5px; gap: 1px; }
+  .hud-btn .icon-sm { width: 18px; height: 18px; }
+}
+
 /* ---------------- 岛主名片：徽章墙 ---------------- */
 
 .profile-hero {

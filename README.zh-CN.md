@@ -1,6 +1,6 @@
 # 天堂小岛 Paradise Isle
 
-> **改版 v8.3**：完成 30 轮玩法扩展、全模块 UI 重构、游戏内美术提升、6 种生物体态、7 种野兽与完整天气系统；新增单文件离线版与静态站点包，可发给别人直接打开。完整改动见 [MODIFICATIONS.md](MODIFICATIONS.md)。
+> **改版 v8.3**：完成 30 轮玩法扩展、全模块 UI 重构、游戏内美术提升、6 种生物体态、7 种野兽与完整天气系统；新增单文件离线版与静态站点包，可发给别人直接打开。在线试玩：**https://jerry-pixel310.github.io/paradise-isle/**；完整改动见 [MODIFICATIONS.md](MODIFICATIONS.md)。
 
 一个浏览器里的海岛生活模拟游戏：种田、养动物、钓鱼、赶走野兽、换装、去邻居岛上串门。进度存在你自己的浏览器里，不需要账号。
 
@@ -43,7 +43,7 @@
 需要 Node.js 20 或更新版本。
 
 ```bash
-git clone https://github.com/appleweiping/paradise-isle.git
+git clone https://github.com/Jerry-pixel310/paradise-isle.git
 cd paradise-isle
 npm install
 npm run dev      # http://localhost:5173

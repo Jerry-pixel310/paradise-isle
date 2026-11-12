@@ -120,6 +120,13 @@ v8.3 完成交付审计，新增单文件离线版与静态站点包。
 - `file://` 与 HTTP 两种方式均实测可玩
 - 存档版本保持 **v31**
 
+### 6. GitHub Pages 上线
+
+- 仓库：https://github.com/Jerry-pixel310/paradise-isle
+- 在线试玩：https://jerry-pixel310.github.io/paradise-isle/
+- GitHub Actions 自动跑类型检查、227 项测试、构建并部署 Pages
+- 已实测网页 200、标题页 / 开局 / HUD / Canvas 正常，0 控制台报错
+
 ## v8.2 验收收口
 
 ### 1. 柔和雪斑

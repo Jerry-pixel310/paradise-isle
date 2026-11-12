@@ -1,6 +1,6 @@
 # Paradise Isle
 
-> **Modified edition v8.3** — 30 rounds of content, a full UI redesign, a completed art pass, six creature silhouettes, seven verified beasts, and rain/snow/storm weather. Includes an offline single-file build (`release/ParadiseIsle.html`) and a static site bundle. Play locally at **http://127.0.0.1:5180/**.
+> **Modified edition v8.3** — 30 rounds of content, a full UI redesign, a completed art pass, six creature silhouettes, seven verified beasts, and rain/snow/storm weather. Includes an offline single-file build (`release/ParadiseIsle.html`) and a static site bundle. Play online: **https://jerry-pixel310.github.io/paradise-isle/**. Locally: **http://127.0.0.1:5180/**.
 
 An island life-sim for the browser: farm, raise animals, fish, fight off wild beasts, dress up and visit neighbours, with progress saved in your browser and no account.
 
@@ -47,7 +47,7 @@ Saves live in browser `localStorage`: switching browsers, clearing data or movin
 Needs Node.js 20 or newer.
 
 ```bash
-git clone https://github.com/appleweiping/paradise-isle.git
+git clone https://github.com/Jerry-pixel310/paradise-isle.git
 cd paradise-isle
 npm install
 npm run dev      # http://localhost:5173

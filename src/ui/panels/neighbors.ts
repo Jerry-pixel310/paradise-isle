@@ -26,6 +26,7 @@ export interface NeighborPanelCtx {
   dispatch: (r: ActionResult) => void;
   onVisit: (npcId: string) => void;
   onVisitSnapshot: (snap: IslandSnapshot) => void;
+  onLive: () => void;
 }
 
 export function openNeighbors(ctx: NeighborPanelCtx): void {
@@ -81,6 +82,13 @@ function render(body: HTMLElement, ctx: NeighborPanelCtx): void {
         });
       },
     }, `🔍 ${t('nb.visitCode')}`),
+    h('button', {
+      class: 'btn btn-sm btn-primary',
+      onclick: () => {
+        closePanel();
+        ctx.onLive();
+      },
+    }, `🛰 ${t('nb.live')}`),
   );
   body.append(codeRow);
 

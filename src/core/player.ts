@@ -106,6 +106,10 @@ export function gainCoins(state: GameState, amount: number): GameEvent[] {
 }
 
 export function spendCoins(state: GameState, amount: number): boolean {
+  if (state.settings?.infiniteCoins) {
+    state.player.coins = Math.max(state.player.coins, 999_999_999);
+    return true;
+  }
   if (state.player.coins < amount) return false;
   state.player.coins -= amount;
   state.stats.coinsSpent += amount;

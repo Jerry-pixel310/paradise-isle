@@ -748,6 +748,8 @@ export interface GameState {
     pixelate?: boolean;
     /** 无限体力：不消耗、不等待恢复（默认由 UI 开启） */
     unlimited?: boolean;
+    /** 无限金币：购买不扣钱（默认由 UI 开启） */
+    infiniteCoins?: boolean;
   };
 }
 

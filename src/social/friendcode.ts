@@ -18,6 +18,8 @@ export interface IslandSnapshot {
   animals: { defId: string; x: number; y: number }[];
   pets: { defId: string; name: string }[];
   takenAt: number;
+  /** 实时同游时房主的位置；离线快照可省略 */
+  player?: { x: number; y: number };
 }
 
 export function takeSnapshot(state: GameState, beauty: number, now: number): IslandSnapshot {

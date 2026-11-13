@@ -30,6 +30,9 @@ import { PET_TRAIN_COOLDOWN_MS, PET_SKILL_COOLDOWN_MS } from '../core/balance';
 import { buildingDef, cropDef, forageDef, furnitureDef, gameDef, itemDef, neighborDef, petDef, allBait, allCrops } from '../core/registry';
 import { saveToSlot } from '../save/save';
 import type { IslandSnapshot } from '../social/friendcode';
+import { takeSnapshot } from '../social/friendcode';
+import { createLiveHost, joinLive, type LiveGuest, type LiveHost, type LiveMessage } from '../social/live';
+import { beautyScore } from '../core/build';
 import { Renderer, sceneFromState, type RenderScene, type SceneActor } from '../render/renderer';
 import { isoX, isoY } from '../render/iso';
 import { Hud } from '../ui/hud';
@@ -44,6 +47,7 @@ import { openSettings } from '../ui/panels/settings';
 import { openCrafting } from '../ui/panels/crafting';
 import { openHelp } from '../ui/panels/help';
 import { openTutorial } from '../ui/panels/tutorial';
+import { openMultiplayer } from '../ui/panels/multiplayer';
 import { openFurniture } from '../ui/panels/furniture';
 import { openFestival } from '../ui/panels/festival';
 import { openPetContest } from '../ui/panels/contest';
@@ -107,6 +111,13 @@ export class App {
   private furnitureMoving: number | null = null;
   private roomBar: HTMLElement;
   private onBackToTitle: () => void;
+  /** 好友同游：房主/访客会话 */
+  private liveHost: LiveHost | null = null;
+  private liveHostCode: string | null = null;
+  private liveGuestSession: LiveGuest | null = null;
+  private liveGuestActor: SceneActor | null = null;
+  private liveBroadcastTimer = 0;
+  private lastLiveMoveAt = 0;
 
   constructor(canvas: HTMLCanvasElement, state: GameState, slot: number, onBackToTitle: () => void) {
     this.state = state;
@@ -170,6 +181,7 @@ export class App {
   destroy(): void {
     this.running = false;
     cancelAnimationFrame(this.raf);
+    this.stopLive();
     this.hud.destroy();
   }
 
@@ -383,10 +395,19 @@ export class App {
           dispatch: this.dispatch,
           onVisit: (npcId) => this.visitNpc(npcId),
           onVisitSnapshot: (snap) => this.visitSnapshot(snap),
+          onLive: () => this.openPanel('multiplayer'),
         });
         break;
       case 'tutorial':
         openTutorial({ onOpen: (panel) => this.openPanel(panel) });
+        break;
+      case 'multiplayer':
+        openMultiplayer({
+          hostCode: this.liveHostCode,
+          onCreateHost: () => this.startLiveHost(),
+          onJoin: (code) => this.joinLiveRoom(code),
+          onStop: () => this.stopLive(),
+        });
         break;
       case 'settings':
         openSettings({
@@ -421,6 +442,99 @@ export class App {
   }
 
   // ---------------------------------------------------------------- 编辑模式
+
+  // ---------------------------------------------------------------- 好友同游
+
+  private async startLiveHost(): Promise<string> {
+    this.stopLive();
+    const host = await createLiveHost(
+      (msg) => {
+        if (msg.type === 'move') {
+          this.liveGuestActor = {
+            avatar: msg.avatar,
+            x: msg.x,
+            y: msg.y,
+            walking: false,
+            name: msg.name,
+          };
+        } else if (msg.type === 'chat') {
+          toast(`${msg.name}: ${msg.text}`, 'info');
+        }
+      },
+      (name) => {
+        this.broadcastLive();
+        toast(t('mp.guestJoined', { name }), 'good');
+      },
+    );
+    this.liveHost = host;
+    this.liveHostCode = host.code;
+    this.liveBroadcastTimer = window.setInterval(() => this.broadcastLive(), 1500);
+    this.broadcastLive();
+    return host.code;
+  }
+
+  private broadcastLive(): void {
+    if (!this.liveHost) return;
+    const snap = takeSnapshot(this.state, beautyScore(this.state), this.now());
+    snap.player = { x: this.playerActor.x, y: this.playerActor.y };
+    this.liveHost.broadcast({ type: 'snap', snap });
+  }
+
+  private async joinLiveRoom(code: string): Promise<void> {
+    this.stopLive();
+    const guest = await joinLive(
+      code,
+      (msg) => this.onLiveMessage(msg),
+      { name: this.state.player.name, avatar: this.state.player.avatar },
+      () => this.stopLive(),
+    );
+    this.liveGuestSession = guest;
+    toast(t('mp.joined'), 'good');
+  }
+
+  private onLiveMessage(msg: LiveMessage): void {
+    if (msg.type === 'snap') {
+      closePanel();
+      if (this.mode.kind === 'snapshot') {
+        this.mode.snap = msg.snap;
+      } else {
+        this.enterLiveSnapshot(msg.snap);
+      }
+    } else if (msg.type === 'chat') {
+      toast(`${msg.name}: ${msg.text}`, 'info');
+    }
+  }
+
+  private enterLiveSnapshot(snap: IslandSnapshot): void {
+    this.mode = { kind: 'snapshot', snap };
+    const size = buildTerrain(snap.seed, snap.islandTier).length;
+    this.playerActor.x = size / 2 + 2;
+    this.playerActor.y = size / 2 + 2;
+    this.playerActor.walking = false;
+    this.walkTarget = null;
+    this.renderer.camera.centerOnTile(size / 2, size / 2);
+    this.hud.setVisiting(snap.name, false);
+  }
+
+  private stopLive(): void {
+    if (this.liveBroadcastTimer) {
+      window.clearInterval(this.liveBroadcastTimer);
+      this.liveBroadcastTimer = 0;
+    }
+    this.liveHost?.stop();
+    this.liveHost = null;
+    this.liveHostCode = null;
+    const wasGuest = !!this.liveGuestSession;
+    this.liveGuestSession?.stop();
+    this.liveGuestSession = null;
+    this.liveGuestActor = null;
+    if (wasGuest && this.mode.kind === 'snapshot') {
+      this.mode = { kind: 'home' };
+      this.walkTarget = null;
+      this.hud.setVisiting(null, false);
+      this.renderer.centerOnIsland(sceneFromState(this.state));
+    }
+  }
 
   private toggleEdit(): void {
     if (this.mode.kind !== 'home') return;
@@ -484,6 +598,10 @@ export class App {
   }
 
   private goHome(): void {
+    if (this.liveHost || this.liveGuestSession) {
+      this.stopLive();
+      return;
+    }
     if (this.mode.kind === 'interior') { this.exitInterior(); return; }
     this.mode = { kind: 'home' };
     this.hud.setVisiting(null, false);
@@ -784,7 +902,16 @@ export class App {
     const now = this.now();
 
     if (this.mode.kind === 'snapshot') {
-      return; // 快照岛纯参观
+      // 实时同游的访客可以自由走动；离线快照仍是纯参观
+      if (this.liveGuestSession) {
+        const size = buildTerrain(this.mode.snap.seed, this.mode.snap.islandTier).length;
+        this.walkTarget = {
+          x: Math.max(1, Math.min(size - 2, tx)),
+          y: Math.max(1, Math.min(size - 2, ty)),
+          cb: null,
+        };
+      }
+      return;
     }
     if (this.mode.kind === 'neighbor') {
       this.onClickNeighbor(this.mode.ns, tx, ty, sx, sy, now);
@@ -1393,10 +1520,29 @@ export class App {
         this.walkTarget = null;
         this.playerActor.walking = false;
         cb?.();
+        if (this.liveGuestSession) {
+          this.liveGuestSession.send({
+            type: 'move',
+            x: this.playerActor.x,
+            y: this.playerActor.y,
+            name: this.state.player.name,
+            avatar: this.state.player.avatar,
+          });
+        }
       } else {
         this.playerActor.x += (dx / dist) * step;
         this.playerActor.y += (dy / dist) * step;
         this.playerActor.walking = true;
+        if (this.liveGuestSession && now - this.lastLiveMoveAt > 250) {
+          this.lastLiveMoveAt = now;
+          this.liveGuestSession.send({
+            type: 'move',
+            x: this.playerActor.x,
+            y: this.playerActor.y,
+            name: this.state.player.name,
+            avatar: this.state.player.avatar,
+          });
+        }
       }
     }
 
@@ -1465,7 +1611,19 @@ export class App {
         game: [],
         weeds: [],
         pets: snap.pets.map((p, i) => ({ defId: p.defId, x: Math.floor(size / 2) + i, y: Math.floor(size / 2) + 3 })),
-        actors: [{ avatar: snap.avatar, x: size / 2, y: size / 2, walking: false, name: snap.name }],
+        actors: [
+          {
+            avatar: snap.avatar,
+            x: snap.player?.x ?? size / 2,
+            y: snap.player?.y ?? size / 2,
+            walking: false,
+            name: snap.name,
+          },
+          ...(this.liveGuestSession ? [{
+            ...this.playerActor,
+            name: this.state.player.name,
+          }] : []),
+        ],
         hover: null,
         ghost: null,
       };
@@ -1474,6 +1632,7 @@ export class App {
     const scene = sceneFromState(this.state);
     this.playerActor.avatar = this.state.player.avatar;
     scene.actors = [{ ...this.playerActor, name: this.state.player.name }];
+    if (this.liveGuestActor) scene.actors.push({ ...this.liveGuestActor });
     if (this.trackedUid !== null) {
       const tracked = this.state.game.find((g) => g.uid === this.trackedUid);
       scene.tracked = tracked ? { x: tracked.x, y: tracked.y } : null;

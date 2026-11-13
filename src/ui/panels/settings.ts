@@ -88,6 +88,12 @@ function render(body: HTMLElement, ctx: SettingsCtx): void {
       toast(v ? t('set.unlimitedOn') : t('set.unlimitedOff'), v ? 'good' : 'info');
       rerender();
     }),
+    toggleRow(t('set.infiniteCoins'), t('set.infiniteCoinsHint'), state.settings.infiniteCoins === true, (v) => {
+      state.settings.infiniteCoins = v;
+      if (v) state.player.coins = Math.max(state.player.coins, 999_999_999);
+      toast(v ? t('set.infiniteCoinsOn') : t('set.infiniteCoinsOff'), v ? 'good' : 'info');
+      rerender();
+    }),
   );
 
   const audio = section(t('set.audio'),    toggleRow(t('set.sound'), t('set.soundHint'), state.settings.sound, (v) => {
@@ -167,7 +173,7 @@ function render(body: HTMLElement, ctx: SettingsCtx): void {
     audio,
     saveSection,
     h('div', { class: 'set-about' },
-      h('div', {}, `${t('start.title')} v9.0 轻松畅玩版`),
+      h('div', {}, `${t('start.title')} v9.1 破解联机版`),
       h('div', {}, t('set.aboutArt')),
     ),
   );

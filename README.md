@@ -1,10 +1,10 @@
 # Paradise Isle
 
-> **Modified edition v9.0** — Unlimited energy by default, a 13-module starter guide, touch-control fixes, and a redesigned 3.2-head character. Play online: **https://jerry-pixel310.github.io/paradise-isle/**.
+> **Modified edition v9.1** — Infinite energy and coins by default, live friend co-op via room codes, a 13-module starter guide, touch-control fixes, and a redesigned 3.2-head character. Play online: **https://jerry-pixel310.github.io/paradise-isle/**.
 
 An island life-sim for the browser: farm, raise animals, fish, fight off wild beasts, dress up and visit neighbours, with progress saved in your browser and no account.
 
-**Play it here: https://appleweiping.github.io/paradise-isle/** (desktop or phone)
+**Play it here: https://jerry-pixel310.github.io/paradise-isle/** (desktop or phone)
 
 ![A new island: planting four carrots, skipping ahead the 90 seconds they take to grow, then harvesting](docs/paradise-isle.gif)
 

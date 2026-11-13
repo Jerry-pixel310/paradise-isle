@@ -187,7 +187,7 @@ export class Hud {
     this.titleEl.textContent = tl(titleDef(state.title).name);
     this.levelEl.textContent = String(p.level);
     this.xpFill.style.width = `${Math.min(100, (p.xp / xpForNextLevel(p.level)) * 100)}%`;
-    this.coinsEl.textContent = String(p.coins);
+    this.coinsEl.textContent = state.settings.infiniteCoins ? '∞' : String(p.coins);
     this.foodEl.textContent = String(p.food);
     this.repEl.textContent = String(p.reputation);
     if (state.settings.unlimited) {

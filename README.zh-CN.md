@@ -1,10 +1,10 @@
 # 天堂小岛 Paradise Isle
 
-> **改版 v9.0**：无限体力默认开启、13 模块新手教程、触屏精度修复、角色重做。在线试玩：**https://jerry-pixel310.github.io/paradise-isle/**；完整改动见 [MODIFICATIONS.md](MODIFICATIONS.md)。
+> **改版 v9.1**：无限体力 + 无限金币默认开启，新增好友实时同游（房间码）、13 模块新手教程、触屏精度修复、角色重做。在线试玩：**https://jerry-pixel310.github.io/paradise-isle/**。
 
 一个浏览器里的海岛生活模拟游戏：种田、养动物、钓鱼、赶走野兽、换装、去邻居岛上串门。进度存在你自己的浏览器里，不需要账号。
 
-**在线试玩：https://appleweiping.github.io/paradise-isle/**（电脑和手机都可以）
+**在线试玩：https://jerry-pixel310.github.io/paradise-isle/**（电脑和手机都可以）
 
 ![新岛开局：种下四根胡萝卜，跳过它们生长所需的 90 秒，然后收获](docs/paradise-isle.gif)
 

@@ -2203,3 +2203,30 @@ button:focus-visible { outline: 3px solid rgba(90, 167, 224, 0.55); outline-offs
   .checkin-hero .btn { max-width: none; width: 100%; }
   .checkin-strip { grid-template-columns: repeat(4, 1fr); }
 }
+
+/* ---------------- 好友同游 ---------------- */
+
+.mp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.mp-card {
+  display: flex; flex-direction: column; gap: 8px;
+  background: rgba(255, 253, 247, 0.78); border: 1px solid rgba(158, 132, 90, 0.22);
+  border-radius: 16px; padding: 14px;
+}
+.mp-kicker { font-size: 8px; letter-spacing: 0.16em; color: #a48a60; }
+.mp-title { font-family: var(--serif); font-size: 20px; font-weight: 600; }
+.mp-desc { font-size: 9.5px; line-height: 1.65; color: #7d715f; }
+.mp-code-box { display: flex; flex-direction: column; gap: 7px; }
+.mp-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px;
+  letter-spacing: 0.06em; background: #f4eedf; border: 1px dashed rgba(158, 132, 90, 0.45);
+  border-radius: 9px; padding: 9px 10px; word-break: break-all; user-select: all;
+}
+.mp-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.mp-input { width: 100%; margin: 0; }
+.mp-status { font-size: 9px; color: #5f7c5b; line-height: 1.5; min-height: 14px; }
+.mp-hint { font-size: 8.5px; color: #9b8c76; line-height: 1.55; }
+.mp-card .btn { align-self: flex-start; }
+
+@media (max-width: 640px) {
+  .mp-grid { grid-template-columns: 1fr; }
+}
